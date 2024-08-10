@@ -1,0 +1,124 @@
+<%- include('./partials/header') %>
+<%- include('./partials/navbar') %>
+
+<div class="section container mt-3">
+    <h2 class="text-center">Attendance Analytics for [Subject Name]</h2>
+
+    <!-- Filter Section -->
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Filter Attendance Data</h5>
+            <form id="filter-form">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="time-period" class="form-label">Time Period</label>
+                        <select id="time-period" name="time-period" class="form-select">
+                            <option value="all">All Time</option>
+                            <option value="last-7-days">Last 7 Days</option>
+                            <option value="last-30-days">Last 30 Days</option>
+                            <option value="last-3-months">Last 3 Months</option>
+                            <option value="last-year">Last Year</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="student-id" class="form-label">Student ID (Optional)</label>
+                        <input type="text" class="form-control" id="student-id" name="student-id"
+                            placeholder="Enter student ID">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Attendance Chart Section -->
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Attendance Overview</h5>
+            <canvas id="attendanceChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Students with Worst Attendance Section -->
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Students with Worst Attendance</h5>
+            <ul id="worst-attendance-list" class="list-group">
+                <!-- List of students with worst attendance will be inserted here -->
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5.3 JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('filter-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const timePeriod = document.getElementById('time-period').value;
+        const studentId = document.getElementById('student-id').value;
+
+        // Fetch filtered data from the server
+        fetch('/fetch-attendance-data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    timePeriod: timePeriod,
+                    studentId: studentId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateChart(data.chartData);
+                updateWorstAttendanceList(data.worstAttendance);
+            })
+            .catch(error => console.error('Error fetching attendance data:', error));
+    });
+
+    function updateChart(data) {
+        const attendanceChart = new Chart(
+            document.getElementById('attendanceChart'), {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Attendance Percentage',
+                        data: data.attendancePercentages,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            }
+        );
+    }
+
+    function updateWorstAttendanceList(students) {
+        const list = document.getElementById('worst-attendance-list');
+        list.innerHTML = ''; // Clear the list
+        students.forEach(student => {
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item';
+            listItem.textContent = `Student ID: ${student.id} - Attendance: ${student.attendancePercentage}%`;
+            list.appendChild(listItem);
+        });
+    }
+
+    // Initial fetch to load data without any filters
+    document.getElementById('filter-form').dispatchEvent(new Event('submit'));
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<%- include('./partials/footer') %>

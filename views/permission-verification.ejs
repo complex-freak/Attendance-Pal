@@ -1,0 +1,76 @@
+<%- include('./partials/header') %>
+<%- include('./partials/navbar') %>
+
+<div class="section container mt-3">
+    <h2 class="text-center">Student Permission Requests</h2>
+
+    <!-- Permissions List -->
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Pending Permissions</h5>
+            <ul id="permissions-list" class="list-group">
+                <!-- List of permissions will be inserted here -->
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5.3 JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Fetch and display pending permissions
+    function fetchPermissions() {
+        fetch('/fetch-permissions')
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('permissions-list');
+                list.innerHTML = ''; // Clear existing list
+                data.forEach(permission => {
+                    const listItem = document.createElement('li');
+                    listItem.className =
+                        'list-group-item d-flex justify-content-between align-items-center';
+                    listItem.innerHTML = `
+                    <div>
+                        <p><strong>Student ID:</strong> ${permission.studentId}</p>
+                        <p><strong>Reason:</strong> ${permission.reason}</p>
+                        ${permission.attachmentUrl ? `<a href="${permission.attachmentUrl}" target="_blank">View Attachment</a>` : ''}
+                    </div>
+                    <div>
+                        <button class="btn btn-success btn-sm" onclick="verifyPermission('${permission.id}', true)">Approve</button>
+                        <button class="btn btn-danger btn-sm" onclick="verifyPermission('${permission.id}', false)">Reject</button>
+                    </div>
+                `;
+                    list.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('Error fetching permissions:', error));
+    }
+
+    // Verify permission (approve/reject)
+    function verifyPermission(permissionId, isApproved) {
+        fetch('/verify-permission', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    permissionId: permissionId,
+                    approved: isApproved
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    fetchPermissions(); // Refresh the permissions list
+                } else {
+                    alert('Failed to verify permission');
+                }
+            })
+            .catch(error => console.error('Error verifying permission:', error));
+    }
+
+    // Initial fetch to load permissions
+    fetchPermissions();
+</script>
+
+<%- include('./partials/footer') %>
