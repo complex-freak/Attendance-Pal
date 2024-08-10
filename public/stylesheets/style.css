@@ -1,0 +1,9 @@
+.section {
+  transform: translateY(60px);
+}
+
+.hero-img {
+  width: 75%;
+  height: 350px;
+  object-fit: contain;
+}

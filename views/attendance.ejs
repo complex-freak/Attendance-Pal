@@ -1,0 +1,61 @@
+<%- include('./partials/header.ejs') %>
+<%- include('./partials/navbar.ejs') %>
+
+<div class="section container mt-3">
+    <h2 class="text-center">Attendance Progress Analytics</h2>
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Attendance Overview</h5>
+            <canvas id="attendanceChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Sample data (replace this with actual data from your backend)
+    const attendanceData = {
+        labels: ['Mathematics', 'Science', 'History', 'English', 'Computer Science'],
+        datasets: [{
+            label: 'Attendance Percentage',
+            data: [85, 90, 75, 95, 80], // Example data
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    // Configure the chart
+    const config = {
+        type: 'bar',
+        data: attendanceData,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    };
+
+    // Render the chart
+    const attendanceChart = new Chart(
+        document.getElementById('attendanceChart'),
+        config
+    );
+</script>
+
+<%- include('./partials/footer.ejs') %>
