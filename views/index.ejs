@@ -1,4 +1,4 @@
-<%- include('./partials/header.ejs') %>
+
 <%- include('partials/navbar.ejs') %>
 
 <!-- Home Section -->
@@ -51,6 +51,10 @@
         if (html5QrCode) {
             html5QrCode.stop().then(() => {
                 html5QrCode.clear();
+            })
+            .catch(err=>{
+                console.log(err);
+                
             });
         }
     });
@@ -109,4 +113,3 @@
     // }, config, qrCodeSuccessCallback);
 </script>
 
-<%- include('./partials/footer.ejs') %>
