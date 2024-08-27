@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const createError = require('http-errors');
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
@@ -8,8 +10,12 @@ const logger = require('morgan');
 const studentRouter = require('./routes/studentRoutes');
 const teacherRouter = require('./routes/teacherRoutes');
 const adminRouter = require('./routes/adminRoutes');
+const connectDB = require('./config');
 
 const app = express();
+
+// connect to DB
+connectDB();
 
 // view engine setup
 app.use(expressLayouts);
