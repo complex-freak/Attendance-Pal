@@ -14,10 +14,13 @@ const permissionSchema = new mongoose.Schema({
     student: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     subject: { type: mongoose.Schema.Types.ObjectId, ref: 'Subject', required: true },
     reason: { type: String, required: true },
-    attachmentUrl: { type: String },
+    attachment: {
+        data: Buffer,
+        contentType: String
+    },
     status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
     createdAt: { type: Date, default: Date.now },
-    verifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Teacher who verified the request
+    verifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     verifiedAt: { type: Date },
 });
 
