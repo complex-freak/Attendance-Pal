@@ -20,8 +20,7 @@
                 </div>
             </section>
 
-            <div class="container">
-                <h1 class="text-center">Venue Management</h1>
+            <div class="">
 
                 <!-- Add New Venue Form -->
                 <form action="/admin/venue" method="POST" class="mb-4">
@@ -34,33 +33,78 @@
 
                 <!-- List of Venues -->
                 <% if (venues.length > 0) { %>
-                <ul class="list-group">
-                    <% venues.forEach(venue => { %>
-                    <li class="list-group-item">
-                        <h5><%= venue.name %> (Capacity: <%= venue.capacity %>)</h5>
 
-                        <!-- Edit Venue Form -->
-                        <form action="/admin/venue/<%= venue._id %>?_method=PUT" method="POST" class="d-inline">
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="name" value="<%= venue.name %>" required>
-                                <input type="number" class="form-control" name="capacity" value="<%= venue.capacity %>"
-                                    required>
-                                <input type="checkbox" class="form-check-input" name="isBooked"
-                                    <%= venue.isBooked ? 'checked' : '' %>>
-                                <label class="form-check-label">Booked</label>
-                                <input type="datetime-local" class="form-control" name="bookingExpiry"
-                                    value="<%= venue.bookingExpiry ? new Date(venue.bookingExpiry).toISOString().slice(0, 16) : '' %>">
-                                <button class="btn btn-success" type="submit">Edit</button>
+                <section>
+                    <div class="container">
+                        <h1 class="h4 fw-bold">Venues</h1>
+                        <table class="table table-striped">
+
+                            <thead>
+                                <tr>
+                                    <th scope="col">Venue Name</th>
+                                    <th scope="col">Capacity</th>
+                                    <th scope="col">Edit</th>
+                                    <th scope="col">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% venues.forEach(venue => { %>
+                                <tr class="trow">
+                                    <td><%= venue.name %></td>
+                                    <td><%= venue.capacity %></td>
+                                    <td>
+                                        <button class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#staticBackdrop">Edit</button>
+                                    </td>
+                                    <td>
+                                        <form action="/admin/venue/<%= venue._id %>?_method=DELETE" method="POST"
+                                            class="d-inline">
+                                            <button class="btn btn-danger" data-bs-toggle="modal"
+                                                data-bs-target="deleteModal">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+
+                        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+                            tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form action="/admin/venue/?_method=PUT" method="POST"></form>
+                                    <div class="modal-body">
+
+                                        <div class="row gy-2 overflow-hidden">
+                                            <div class="col-12">
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" name="name" id="name"
+                                                        value="" required>
+                                                    <label for="name" class="form-label">Venue Name</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-floating mb-3">
+                                                    <input type="number" class="form-control" name="capacity"
+                                                        id="capacity" value="" required>
+                                                    <label for="capacity" class="form-label">Capacity</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                        <button class="btn btn-primary" type="submit">Edit</button>
+                                    </div>
+                                    </form>
+                                </div>
                             </div>
-                        </form>
+                        </div>
+                    </div>
+                </section>
 
-                        <!-- Delete Venue Form -->
-                        <form action="/admin/venue/<%= venue._id %>?_method=DELETE" method="POST" class="d-inline">
-                            <button class="btn btn-danger" type="submit">Delete</button>
-                        </form>
-                    </li>
-                    <% }) %>
-                </ul>
                 <% } else { %>
                 <p class="text-center">No venues available.</p>
                 <% } %>

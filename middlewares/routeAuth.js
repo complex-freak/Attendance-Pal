@@ -10,6 +10,8 @@ const isAdmin = async function (req, res, next) {
       if (req.user.role === "admin") {
         const user = await User.findOne(req.user.id);
         res.locals.user = user;
+        console.log(user);
+
         next();
       } else {
         res.render("auth");

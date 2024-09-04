@@ -37,6 +37,7 @@ router.get("/", isAdmin, function (req, res, next) {
 
 });
 
+
 router.get("/users", isAdmin, async (req, res) => {
   try {
     const users = await User.find().populate("department").populate("course");
@@ -158,9 +159,9 @@ router.get("/analytics", isAdmin, async (req, res) => {
         $group: { _id: null, avgAttendance: { $avg: "$attendancePercentage" } },
       },
     ]);
-    const topPerformer = await getTopPerformer(filter); // Custom function to get top performer
-    const lowestPerformer = await getLowestPerformer(filter); // Custom function to get lowest performer
-    const reports = []; // Populate with actual report data
+    const topPerformer = await getTopPerformer(filter); 
+    const lowestPerformer = await getLowestPerformer(filter); 
+    const reports = []; 
 
     res.render("admin/analytics", {
       totalAttendance,
@@ -713,10 +714,10 @@ router.post('/settings/security', isAdmin, (req, res) => {
 });
 
 // GET route to fetch all venues (for displaying in the management interface)
-router.get('/venues', async (req, res) => {
+router.get('/venues', isAdmin, async (req, res) => {
   try {
       const venues = await Venue.find();
-      res.render('venue-management', { venues }); // Pass venues to the EJS template
+      res.render('admin/venue-management', { venues }); // Pass venues to the EJS template
   } catch (error) {
       console.error('Error fetching venues:', error);
       res.status(500).json({ message: 'Error fetching venues.' });
@@ -724,7 +725,7 @@ router.get('/venues', async (req, res) => {
 });
 
 // POST route to add a new venue
-router.post('/venue', async (req, res) => {
+router.post('/venue', isAdmin, async (req, res) => {
   try {
       const { name, capacity } = req.body;
       const newVenue = new Venue({ name, capacity });
@@ -737,7 +738,7 @@ router.post('/venue', async (req, res) => {
 });
 
 // PUT route to edit an existing venue
-router.put('/venue/:id', async (req, res) => {
+router.put('/venue/:id', isAdmin, async (req, res) => {
   try {
       const { id } = req.params;
       const { name, capacity, isBooked, bookingExpiry } = req.body;
@@ -753,7 +754,7 @@ router.put('/venue/:id', async (req, res) => {
       venue.bookingExpiry = bookingExpiry ? new Date(bookingExpiry) : null;
 
       await venue.save();
-      res.redirect('/venues');
+      res.redirect('/admin/venues');
   } catch (error) {
       console.error('Error updating venue:', error);
       res.status(500).json({ message: 'Error updating venue.' });
@@ -761,7 +762,7 @@ router.put('/venue/:id', async (req, res) => {
 });
 
 // DELETE route to remove an existing venue
-router.delete('/venue/:id', async (req, res) => {
+router.delete('/venue/:id', isAdmin, async (req, res) => {
   try {
       const { id } = req.params;
       await Venue.findByIdAndDelete(id);

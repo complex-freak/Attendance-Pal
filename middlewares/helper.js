@@ -1,4 +1,5 @@
-// Function to get top performer
+const Attendance = require('../models/Attendance');
+
 const getTopPerformer = async function (filter) {
   const result = await Attendance.aggregate([
     { $match: filter },
@@ -16,7 +17,7 @@ const getTopPerformer = async function (filter) {
     : "N/A";
 };
 
-// Function to get lowest performer
+
 const getLowestPerformer = async function (filter) {
   const result = await Attendance.aggregate([
     { $match: filter },

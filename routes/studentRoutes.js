@@ -176,5 +176,17 @@ router.post('/submit-attendance', isStudent, async (req, res) => {
     }
 });
 
+router.get('/logout', (req, res) => {
+    const role = req.session.user ? req.session.user.role : null;
+  
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            return res.status(500).send('Failed to log out.');
+        }
+  
+        res.redirect('/')
+    });
+  });
 
 module.exports = router;

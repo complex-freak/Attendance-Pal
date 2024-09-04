@@ -20,13 +20,46 @@
             </section>
 
             <!-- Available Venues List -->
-            <div class="card mt-4">
-                <div class="card-body">
-                    <h5 class="card-title">Available Venues</h5>
-                    <ul id="venues-list" class="list-group">
-                        <!-- List of available venues will be inserted here -->
+            <div class="container mt-5">
+                <!-- List available venues -->
+                <h3>Available Venues</h3>
+                <% if (availableVenues.length > 0) { %>
+                    <ul class="list-group mb-4">
+                        <% availableVenues.forEach(venue => { %>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <%= venue.name %> (Capacity: <%= venue.capacity %>)
+                                <form action="/teacher/book-venue/<%= venue._id %>" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-primary">Book</button>
+                                </form>
+                            </li>
+                        <% }) %>
                     </ul>
-                </div>
+                <% } else { %>
+                    <p>No available venues.</p>
+                <% } %>
+        
+                <!-- List booked venues -->
+                <h3>Booked Venues</h3>
+                <% if (bookedVenues.length > 0) { %>
+                    <ul class="list-group">
+                        <% bookedVenues.forEach(venue => { %>
+                            <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-secondary">
+                                <%= venue.name %> (Capacity: <%= venue.capacity %> - Booked Until: <%= new Date(venue.bookingExpiry).toLocaleTimeString() %>)
+                            
+                                <% if (venue.bookedBy && user && venue.bookedBy.toString() === user._id.toString()) { %>
+                                    <form action="/teacher/release-venue/<%= venue._id %>" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-danger">Release</button>
+                                    </form>
+                                <% } else { %>
+                                    <span>Booked by another teacher</span>
+                                <% } %>
+                            </li>
+                            
+                        <% }) %>
+                    </ul>
+                <% } else { %>
+                    <p>No booked venues.</p>
+                <% } %>
             </div>
         </div>
     </div>
