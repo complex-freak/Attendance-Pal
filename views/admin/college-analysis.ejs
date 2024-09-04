@@ -1,0 +1,33 @@
+<%- include('../partials/adminHeader') %>
+
+<div class="container-fluid">
+    <div class="row">
+        <%- include('../components/adminSidebar') %>
+
+        <div class="container mt-5">
+            <h1>Attendance Analysis by College</h1>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>College</th>
+                        <th>Total Attendance</th>
+                        <th>Present</th>
+                        <th>Absent</th>
+                        <th>Average Attendance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% attendanceByCollege.forEach(college => { %>
+                        <tr>
+                            <td><%= college.collegeName %></td>
+                            <td><%= college.totalAttendance %></td>
+                            <td><%= college.presentCount %></td>
+                            <td><%= college.absentCount %></td>
+                            <td><%= (college.averageAttendance * 100).toFixed(2) %> %</td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -26,6 +26,7 @@ const Course = mongoose.model('Course', courseSchema);
 
 const subjectSchema = new mongoose.Schema({
     name: { type: String, required: true },
+    code: { type: String, required: true },
     course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
     teachers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] // Teachers who teach this subject
 });
@@ -34,3 +35,4 @@ const Subject = mongoose.model('Subject', subjectSchema);
 
 
 module.exports = { College, Department, Course, Subject }
+

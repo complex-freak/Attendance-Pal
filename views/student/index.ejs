@@ -1,4 +1,3 @@
-
 <%- include('../partials/navbar.ejs') %>
 
 <!-- Home Section -->
@@ -6,7 +5,8 @@
     <h1>Take Attendance</h1>
     <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMnphOXhoNzM2eTJ0em4xZ2tyMDJ1d2xyYWtzZW0wbGw5c3pxNWM2MyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ZqtXbgxEWHV8oF8L9J/giphy.gif"
         alt="QR Code" class="my-md-3 hero-img">
-    <button class="btn btn-primary d-block mx-auto" data-bs-toggle="modal" data-bs-target="#scanModal">Scan Me</button>
+    <button id="scan-me" class="btn btn-primary d-block mx-auto" data-bs-toggle="modal" data-bs-target="#scanModal">Scan
+        Me</button>
 </div>
 
 <!-- Modal -->
@@ -34,82 +34,124 @@
 <script>
     const scannedResult = document.getElementById("scanned-result");
     const stopScanBtn = document.getElementById("stop-scan-btn");
-    const rescanbtn = document.getElementById("rescan-btn");
+    const rescanBtn = document.getElementById("rescan-btn");
+    const scanModal = document.getElementById("scanModal");
 
+    let html5QrCode = new Html5Qrcode("reader");
+    let cameraId;
+
+    // Function to handle the QR code scanning result
     function onScanSuccess(decodedText, decodedResult) {
         scannedResult.innerText = decodedText;
         scannedResult.className = "text-success";
-        html5QrCode.stop()
+
+        // Stop the scanner after a successful scan
+        try {
+            html5QrCode.stop().then(() => {
+                html5QrCode.clear();
+                html5QrCode = {};
+                rescanBtn.disabled = true;
+
+                // sendQrCodeData(decodedResult);
+            })
+        } catch (error) {
+            if (error == "Cannot stop, scanner is not running or paused.") {
+                // empty block of code to jump the unneccessary error found in the htmml5Qrcode library
+            }
+            console.error("Error stopping the scan:", err);
+        }
+
+
     }
 
     function onScanFailure(error) {
-        scannedResult.innerText = "Failed to scan code. Try again!";
-        scannedResult.className = "text-danger";
+        // Wait for 10 seconds before stopping the scan
+        setTimeout(() => {
+            if (html5QrCode) {
+                try {
+                    html5QrCode.stop().then(() => {
+                        html5QrCode.clear();
+                        html5QrCode = {};
+                        rescanBtn.disabled = false;
+
+                        scannedResult.innerText = "Failed to scan code. Try again!";
+                        scannedResult.className = "text-danger"
+                    })
+                } catch (error) {
+                    if (error == "Cannot stop, scanner is not running or paused.") {
+                        // empty block of code to jump the unneccessary error found in the htmml5Qrcode library
+                    }
+                }
+            };
+        }, 10000); // 10 seconds in milliseconds
+    }
+
+    scanModal.addEventListener("shown.bs.modal", async () => {
+        const config = {
+            fps: 10,
+            qrbox: {
+                width: 250,
+                height: 250
+            }
+        };
+
+        html5QrCode.start({
+            facingMode: "environment"
+        }, config, onScanSuccess, onScanFailure);
+    })
+
+    // Function to send QR code data to the server
+    function sendQrCodeData(decodedText) {
+        const dataToSend = {
+            username: 'student123', // Replace with the actual username from your application context
+            qrCodeData: JSON.parse(decodedText) // Assuming QR code contains JSON data
+        };
+
+        fetch('/submit-attendance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToSend)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error:', data.error);
+                    alert(`Error: ${data.error}`);
+                } else {
+                    console.log('Success:', data.message);
+                    alert(`Attendance marked as ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting data to server:', error);
+                alert('An error occurred while submitting the attendance.');
+            });
     }
 
     stopScanBtn.addEventListener('click', () => {
         if (html5QrCode) {
-            html5QrCode.stop().then(() => {
-                html5QrCode.clear();
-            })
-            .catch(err=>{
-                console.log(err);
-                
-            });
+            try {
+                html5QrCode.stop().then(() => {
+                    html5QrCode.clear();
+                    rescanBtn.disabled = false;
+                })
+            } catch (error) {
+                if (error == "Cannot stop, scanner is not running or paused.") {
+                    // empty block of code to jump the unneccessary error found in the htmml5Qrcode library
+                }
+                console.error("Error stopping the scan:", err);
+            }
         }
     });
 
-    rescanbtn.addEventListener('click', () => {
+    rescanBtn.addEventListener('click', () => {
         if (html5QrCode) {
             scannedResult.innerText = "";
             scannedResult.className = "text-black";
-            html5QrCode.start({
-                facingMode: {
-                    exact: "user"
-                }
-            }, config, onScanSuccess, onScanFailure);
+            rescanBtn.disabled = false;
+            startQrCodeScanner(cameraId);
         }
     });
-
-    // This method will trigger user permissions
-    let cameraId;
-    Html5Qrcode.getCameras().then(devices => {
-        if (devices && devices.length) {
-            cameraId = devices[0].id;
-            // .. use this to start scanning.
-        }
-    }).catch(err => {
-        let message = err.message;
-        if (message == undefined) {
-            scannedResult.innerText = err;
-        } else {
-            scannedResult.innerText = "No Camera Found";
-        }
-
-        scannedResult.className = "text-danger";
-    });
-
-    const html5QrCode = new Html5Qrcode("reader");
-    const config = {
-        fps: 10,
-        qrbox: {
-            width: 250,
-            height: 250
-        }
-    };
-
-    // Select front camera or fail with `OverconstrainedError`.
-    html5QrCode.start({
-        facingMode: {
-            exact: "user"
-        }
-    }, config, onScanSuccess, onScanFailure);
-
-    // Select back camera or fail with `OverconstrainedError`.
-    // html5QrCode.start({
-    //     facingMode: {
-    //         exact: "environment"
-    //     }
-    // }, config, qrCodeSuccessCallback);
 </script>
-

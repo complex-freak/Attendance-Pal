@@ -38,3 +38,4 @@ const Report = mongoose.model('Report', reportSchema);
 
 
 module.exports = { Attendance, Permission, Report }
+

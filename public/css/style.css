@@ -1,9 +1,17 @@
-.section {
+/* .section {
   transform: translateY(60px);
-}
+} */
 
 .hero-img {
   width: 75%;
   height: 350px;
   object-fit: contain;
+}
+
+.modal {
+  z-index: 1050; 
+}
+
+.modal-backdrop {
+  z-index: 1049;
 }

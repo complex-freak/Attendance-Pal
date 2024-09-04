@@ -1,47 +1,68 @@
+<%- include('../partials/adminHeader') %>
 
-<%- include('../partials/navbar') %>
+<div class="container-fluid">
+    <div class="row">
+        <%- include('../components/teacherSidebar') %>
 
-<div class="section container mt-3">
-    <h2 class="text-center">Generate Attendance QR Code</h2>
-
-    <!-- QR Code Generation Section -->
-    <div class="card mt-4">
-        <div class="card-body">
-            <form id="generate-qr-form">
-                <div class="mb-3">
-                    <label for="course-code" class="form-label">Course Code</label>
-                    <input type="text" class="form-control" id="course-code" name="course-code"
-                        placeholder="Enter course code" required>
+        <div class="content col-md-10 mt-3">
+            <h2 class="text-center">Generate Attendance QR Code</h2>
+        
+            <!-- QR Code Generation Section -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <form id="generate-qr-form">
+                        <div class="mb-3">
+                            <label for="course-code" class="form-label">Course Code</label>
+                            <input type="text" class="form-control" id="course-code" name="course-code"
+                                placeholder="Enter course code" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Generate QR Code</button>
+                    </form>
+        
+                    <!-- QR Modal -->
+                    <div id="qr-modal" class="modal fade" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="qrModalLabel">QR Code for Attendance</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <img id="qr-code-image" src="" alt="QR Code" class="img-fluid mb-3">
+                                    <p id="expiry-message" class="text-danger mt-2"></p>
+                                    <p id="countdown-timer" class="text-info"></p>
+                                    <a id="download-link" class="btn btn-success" download="qr-code.png">Download QR Code</a>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Generate QR Code</button>
-            </form>
-
-            <div id="qr-code-section" class="mt-4 d-none">
-                <h5 class="card-title">QR Code</h5>
-                <img id="qr-code-image" src="" alt="QR Code" class="img-fluid">
-                <p id="expiry-message" class="text-danger mt-2"></p>
+            </div>
+        
+            <!-- Manual Attendance Section -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Register Attendance Manually</h5>
+                    <form id="manual-attendance-form">
+                        <div class="mb-3">
+                            <label for="student-id" class="form-label">Student ID</label>
+                            <input type="text" class="form-control" id="student-id" name="student-id"
+                                placeholder="Enter student ID" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="course-code-manual" class="form-label">Course Code</label>
+                            <input type="text" class="form-control" id="course-code-manual" name="course-code-manual"
+                                placeholder="Enter course code" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Register Attendance</button>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Manual Attendance Section -->
-    <div class="card mt-4">
-        <div class="card-body">
-            <h5 class="card-title">Register Attendance Manually</h5>
-            <form id="manual-attendance-form">
-                <div class="mb-3">
-                    <label for="student-id" class="form-label">Student ID</label>
-                    <input type="text" class="form-control" id="student-id" name="student-id"
-                        placeholder="Enter student ID" required>
-                </div>
-                <div class="mb-3">
-                    <label for="course-code-manual" class="form-label">Course Code</label>
-                    <input type="text" class="form-control" id="course-code-manual" name="course-code-manual"
-                        placeholder="Enter course code" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Register Attendance</button>
-            </form>
-        </div>
     </div>
 </div>
 
@@ -51,34 +72,51 @@
 
         const courseCode = document.getElementById('course-code').value;
 
-        // Replace with your server URL for generating the QR code
-        const url = '/generate-qr-code';
+        const url = '/teacher/generate-qr-code';
 
         fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    courseCode: courseCode
-                })
+                body: JSON.stringify({ courseCode })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.qrCodeUrl) {
-                    const qrCodeSection = document.getElementById('qr-code-section');
                     const qrCodeImage = document.getElementById('qr-code-image');
                     const expiryMessage = document.getElementById('expiry-message');
+                    const downloadLink = document.getElementById('download-link');
+                    const countdownTimer = document.getElementById('countdown-timer');
 
                     qrCodeImage.src = data.qrCodeUrl;
-                    qrCodeSection.classList.remove('d-none');
+                    downloadLink.href = data.qrCodeUrl;
 
-                    // Set a timeout to remove the QR code after 30 minutes
+                    // Show the modal with the QR code
+                    const qrModal = new bootstrap.Modal(document.getElementById('qr-modal'));
+                    qrModal.show();
+
+                    // Initialize countdown
+                    let timeLeft = 30 * 60; // 30 minutes in seconds
+
+                    const countdownInterval = setInterval(() => {
+                        const minutes = Math.floor(timeLeft / 60);
+                        const seconds = timeLeft % 60;
+                        countdownTimer.textContent = `Expires in ${minutes}m ${seconds}s`;
+
+                        if (timeLeft <= 0) {
+                            clearInterval(countdownInterval);
+                            qrModal.hide();
+                            expiryMessage.textContent = 'The QR Code has expired. Please generate a new one.';
+                        }
+
+                        timeLeft -= 1;
+                    }, 1000);
+
+                    // Hide the modal and clear the timer after 30 minutes
                     setTimeout(() => {
-                        qrCodeSection.classList.add('d-none');
-                        qrCodeImage.src = '';
-                        expiryMessage.textContent =
-                            'The QR Code has expired. Please generate a new one.';
+                        clearInterval(countdownInterval);
+                        qrModal.hide();
                     }, 1800000); // 30 minutes in milliseconds
                 }
             })
@@ -91,8 +129,7 @@
         const studentId = document.getElementById('student-id').value;
         const courseCodeManual = document.getElementById('course-code-manual').value;
 
-        // Replace with your server URL for registering attendance manually
-        const url = '/register-attendance-manually';
+        const url = '/teacher/manual-attendance-register';
 
         fetch(url, {
                 method: 'POST',
@@ -100,7 +137,7 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    studentId: studentId,
+                    studentId,
                     courseCode: courseCodeManual
                 })
             })
@@ -116,4 +153,3 @@
             .catch(error => console.error('Error registering attendance:', error));
     });
 </script>
-
