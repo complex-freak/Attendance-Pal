@@ -1,35 +1,77 @@
 const express = require('express')
 const multer = require('multer');
 const router = express.Router();
+const jwt = require("jsonwebtoken");
+const jwtSecret = process.env.JWT_SECRET;
 
 const { Permission, Attendance } = require('../models/Attendance');
 const User = require('../models/User');
 const Subject = require('../models/College');
 const Venue = require('../models/Venue');
+const { isStudent } = require('../middlewares/routeAuth');
+
 
 // Setup multer for file uploads with memory storage
 const storage = multer.memoryStorage(); // Store files in memory
 const upload = multer({ storage: storage });
 
+router.post('/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        // Find the user by username
+        const user = await User.findOne({ username }).populate('course department subjects');
+        if (!user) {
+            return res.status(400).send('Invalid username or password.');
+        }
+
+        // Compare the provided password with the stored hash
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) {
+            console.log(user);
+            return res.status(400).send('Invalid password.');
+        }
+
+        // Generate a JWT token
+        const token = jwt.sign({ userId: user._id, role: user.role }, jwtSecret, { expiresIn: '1h' });
+
+        // Store the token and user data in the session
+        req.session.user = { id: user._id, username: user.username, role: user.role };
+        req.session.token = token;
+
+        // Redirect based on role
+        if (user.role === 'admin') {
+            res.redirect('/admin');
+        } else if (user.role === 'teacher') {
+            res.redirect('/teacher');
+        } else {
+            res.redirect('/');
+        }
+    } catch (error) {
+        console.error('Error logging in:', error);
+        res.status(500).send('Server Error');
+    }
+});
+
+
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', isStudent, function(req, res, next) {
   res.render('student/index', { title: 'Express' });
 });
 
-router.get('/attendance', (req, res) =>{
+router.get('/attendance', isStudent, (req, res) =>{
   res.render('student/attendance', { title: 'Attendance' });
 });
 
-router.get('/permission', (req, res) =>{
+router.get('/permission', isStudent, (req, res) =>{
   res.render('student/permission', { title: 'Ask Permission' });
 });
 
-router.get('/change-password', (req, res) =>{
+router.get('/change-password', isStudent, (req, res) =>{
   res.render('change-password', {  });
 });
 
-
-router.post('/permission', upload.single('attachment'), async (req, res) => {
+router.post('/permission', isStudent, upload.single('attachment'), async (req, res) => {
     try {
         const { username, subjectId, reason } = req.body;
 
@@ -78,7 +120,7 @@ router.post('/permission', upload.single('attachment'), async (req, res) => {
 });
 
 // POST route to handle scanned QR code
-router.post('/submit-attendance', async (req, res) => {
+router.post('/submit-attendance', isStudent, async (req, res) => {
     try {
         const { username, qrCodeData } = req.body;
         const { subjectCode, venueId, date, time } = qrCodeData; // Extracted data from QR code

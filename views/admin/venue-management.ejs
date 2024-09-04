@@ -1,0 +1,70 @@
+<%- include('../partials/adminHeader') %>
+
+<div class="container-fluid">
+    <div class="row">
+        <%- include('../components/adminSidebar') %>
+
+        <div class="content col-md-10">
+            <section class=" bg-light">
+                <div class="row">
+                    <div class="col-12 pb-3">
+                        <h1 class="h4">Venue Management</h1>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb m-0 fs-7">
+                                <li class="breadcrumb-item"><a class="link-primary text-decoration-none"
+                                        href="index.html">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Venue Management</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </section>
+
+            <div class="container">
+                <h1 class="text-center">Venue Management</h1>
+
+                <!-- Add New Venue Form -->
+                <form action="/admin/venue" method="POST" class="mb-4">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="name" placeholder="Venue Name" required>
+                        <input type="number" class="form-control" name="capacity" placeholder="Capacity" required>
+                        <button class="btn btn-primary" type="submit">Add Venue</button>
+                    </div>
+                </form>
+
+                <!-- List of Venues -->
+                <% if (venues.length > 0) { %>
+                <ul class="list-group">
+                    <% venues.forEach(venue => { %>
+                    <li class="list-group-item">
+                        <h5><%= venue.name %> (Capacity: <%= venue.capacity %>)</h5>
+
+                        <!-- Edit Venue Form -->
+                        <form action="/admin/venue/<%= venue._id %>?_method=PUT" method="POST" class="d-inline">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="name" value="<%= venue.name %>" required>
+                                <input type="number" class="form-control" name="capacity" value="<%= venue.capacity %>"
+                                    required>
+                                <input type="checkbox" class="form-check-input" name="isBooked"
+                                    <%= venue.isBooked ? 'checked' : '' %>>
+                                <label class="form-check-label">Booked</label>
+                                <input type="datetime-local" class="form-control" name="bookingExpiry"
+                                    value="<%= venue.bookingExpiry ? new Date(venue.bookingExpiry).toISOString().slice(0, 16) : '' %>">
+                                <button class="btn btn-success" type="submit">Edit</button>
+                            </div>
+                        </form>
+
+                        <!-- Delete Venue Form -->
+                        <form action="/admin/venue/<%= venue._id %>?_method=DELETE" method="POST" class="d-inline">
+                            <button class="btn btn-danger" type="submit">Delete</button>
+                        </form>
+                    </li>
+                    <% }) %>
+                </ul>
+                <% } else { %>
+                <p class="text-center">No venues available.</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>

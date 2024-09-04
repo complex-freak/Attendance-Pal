@@ -1,11 +1,23 @@
-<%- include('../partials/adminHeader') %>
+<%- include('../partials/teacherHeader') %>
 
 <div class="container-fluid">
     <div class="row">
         <%- include('../components/teacherSidebar') %>
 
         <div class="content col-md-10 mt-3">
-            <h2 class="text-center">Book a Venue</h2>
+            <section class=" bg-light">
+                <div class="row">
+                  <div class="col-12 pb-3">
+                    <h1 class="h4">Book a Venue</h1>
+                    <nav aria-label="breadcrumb">
+                      <ol class="breadcrumb m-0 fs-7">
+                        <li class="breadcrumb-item"><a class="link-primary text-decoration-none" href="/teacher">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Book Venue</li>
+                      </ol>
+                    </nav>
+                  </div>
+                </div>
+            </section>
 
             <!-- Available Venues List -->
             <div class="card mt-4">

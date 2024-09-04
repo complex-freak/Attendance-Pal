@@ -1,12 +1,13 @@
 const express = require("express");
 const qr = require('qrcode');
+const { isTeacher } = require('../middlewares/routeAuth');  
 const router = express.Router();
 
-router.get("/", (req, res) => {
+router.get("/", isTeacher,  (req, res) => {
   res.render("teacher/index", {  });
 });
 
-router.post('/generate-qr-code', async (req, res) => {
+router.post('/generate-qr-code', isTeacher, async (req, res) => {
   const { courseCode } = req.body;
 
   if (!courseCode) {
@@ -33,14 +34,6 @@ router.post('/generate-qr-code', async (req, res) => {
       res.status(500).json({ error: 'Failed to generate QR code' });
   }
 });
-
-// Middleware to check if the user is a teacher
-const isTeacher = (req, res, next) => {
-  if (req.user && req.user.role === 'teacher') {
-      return next();
-  }
-  return res.status(403).json({ message: 'Access denied. Only teachers can register attendance.' });
-};
 
 // Route to manually register attendance
 router.post('/manual-attendance-register', isTeacher, async (req, res) => {
@@ -70,24 +63,37 @@ router.post('/manual-attendance-register', isTeacher, async (req, res) => {
   }
 });
 
-router.get("/verify-permission", (req, res) => {
+router.get("/verify-permission", isTeacher, (req, res) => {
   res.render("teacher/permission-verification", {  });
 });
 
-router.get("/book-venue", (req, res) => {
+router.get("/book-venue", isTeacher, (req, res) => {
   res.render("teacher/book-venue", {  });
 });
 
-router.get("/analytics", (req, res) => {
+router.get("/analytics", isTeacher, (req, res) => {
   res.render("teacher/attendance-analytics", {  });
 });
 
-router.get("/profile", (req, res) => {
+router.get("/profile", isTeacher, (req, res) => {
   res.render("teacher/profile", {  });
 });
 
-router.get('/change-password', (req, res) =>{
+router.get('/change-password', isTeacher, (req, res) =>{
     res.render('teacher/change-password', {  });
+});
+
+router.get('/logout', (req, res) => {
+  const role = req.session.user ? req.session.user.role : null;
+
+  req.session.destroy((err) => {
+      if (err) {
+          console.error('Error destroying session:', err);
+          return res.status(500).send('Failed to log out.');
+      }
+
+      res.redirect('/teacher')
+  });
 });
 
 module.exports = router;

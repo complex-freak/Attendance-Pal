@@ -1,11 +1,22 @@
-<%- include('../partials/adminHeader') %>
+<%- include('../partials/teacherHeader') %>
 
 <div class="container-fluid">
     <div class="row">
         <%- include('../components/teacherSidebar') %>
 
         <div class="content col-md-10 mt-3">
-            <h2 class="text-center">Generate Attendance QR Code</h2>
+            <section class=" bg-light">
+                <div class="row">
+                  <div class="col-12 pb-3">
+                    <h1 class="h4">Generate Attendance QR Code</h1>
+                    <nav aria-label="breadcrumb">
+                      <ol class="breadcrumb m-0 fs-7">
+                        <li class="breadcrumb-item"><a class="link-primary text-decoration-none" href="/teacher">Home</a></li>
+                      </ol>
+                    </nav>
+                  </div>
+                </div>
+            </section>
         
             <!-- QR Code Generation Section -->
             <div class="card mt-4">

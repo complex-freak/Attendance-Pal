@@ -1,0 +1,95 @@
+<%- include('../partials/adminHeader') %>
+
+<div class="container-fluid">
+    <div class="row">
+        <%- include('../components/adminSidebar') %>
+
+        <div class="content col-md-10">
+            <h1>Admin Settings</h1>
+        
+            <!-- Navigation Tabs -->
+            <ul class="nav nav-tabs" id="settingsTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="user-management-tab" data-bs-toggle="tab" href="#user-management" role="tab" aria-controls="user-management" aria-selected="true">User Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="app-settings-tab" data-bs-toggle="tab" href="#app-settings" role="tab" aria-controls="app-settings" aria-selected="false">Application Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="security-settings-tab" data-bs-toggle="tab" href="#security-settings" role="tab" aria-controls="security-settings" aria-selected="false">Security Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="system-info-tab" data-bs-toggle="tab" href="#system-info" role="tab" aria-controls="system-info" aria-selected="false">System Information</a>
+                </li>
+            </ul>
+        
+            <!-- Tab Content -->
+            <div class="tab-content mt-4" id="settingsTabContent">
+                <!-- User Management -->
+                <div class="tab-pane fade show active" id="user-management" role="tabpanel" aria-labelledby="user-management-tab">
+                    <h3>User Management</h3>
+                    <p>Manage users (students, teachers, admins), including creating, updating, or deleting user accounts.</p>
+                    <a href="/admin/users" class="btn btn-primary">Go to User Management</a>
+                </div>
+        
+                <!-- Application Settings -->
+                <div class="tab-pane fade" id="app-settings" role="tabpanel" aria-labelledby="app-settings-tab">
+                    <h3>Application Settings</h3>
+                    <form action="/admin/settings/application" method="POST">
+                        <div class="mb-3">
+                            <label for="app-name" class="form-label">Application Name</label>
+                            <input type="text" class="form-control" id="app-name" name="appName" value="<%= appName %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="app-email" class="form-label">Support Email</label>
+                            <input type="email" class="form-control" id="app-email" name="appEmail" value="<%= appEmail %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="app-timezone" class="form-label">Timezone</label>
+                            <select class="form-select" id="app-timezone" name="appTimezone">
+                                <option value="UTC" <%= appTimezone === 'UTC' ? 'selected' : '' %>>UTC</option>
+                                <option value="EST" <%= appTimezone === 'EST' ? 'selected' : '' %>>EST</option>
+                                <option value="PST" <%= appTimezone === 'PST' ? 'selected' : '' %>>PST</option>
+                                <!-- Add more timezones as needed -->
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Settings</button>
+                    </form>
+                </div>
+        
+                <!-- Security Settings -->
+                <div class="tab-pane fade" id="security-settings" role="tabpanel" aria-labelledby="security-settings-tab">
+                    <h3>Security Settings</h3>
+                    <form action="/admin/settings/security" method="POST">
+                        <div class="mb-3">
+                            <label for="password-policy" class="form-label">Password Policy</label>
+                            <select class="form-select" id="password-policy" name="passwordPolicy">
+                                <option value="strong" <%= passwordPolicy === 'strong' ? 'selected' : '' %>>Strong (8+ characters, including uppercase, lowercase, and numbers)</option>
+                                <option value="medium" <%= passwordPolicy === 'medium' ? 'selected' : '' %>>Medium (6+ characters, including letters and numbers)</option>
+                                <option value="weak" <%= passwordPolicy === 'weak' ? 'selected' : '' %>>Weak (4+ characters)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="session-timeout" class="form-label">Session Timeout (minutes)</label>
+                            <input type="number" class="form-control" id="session-timeout" name="sessionTimeout" value="<%= sessionTimeout %>">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Security Settings</button>
+                    </form>
+                </div>
+        
+                <!-- System Information -->
+                <div class="tab-pane fade" id="system-info" role="tabpanel" aria-labelledby="system-info-tab">
+                    <h3>System Information</h3>
+                    <p>View system information, including server status, version, and performance metrics.</p>
+                    <ul class="list-group">
+                        <li class="list-group-item">Server Status: <%= serverStatus %></li>
+                        <li class="list-group-item">Application Version: <%= appVersion %></li>
+                        <li class="list-group-item">Node.js Version: <%= nodeVersion %></li>
+                        <li class="list-group-item">Memory Usage: <%= memoryUsage %> MB</li>
+                        <li class="list-group-item">Uptime: <%= uptime %> hours</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

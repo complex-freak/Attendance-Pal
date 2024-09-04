@@ -1,0 +1,198 @@
+<%- include('../partials/teacherHeader') %>
+
+<div class="container-fluid">
+    <div class="row">
+        <%- include('../components/teacherSidebar') %>
+
+        <div class="content col-md-10">
+            <main id="main">
+
+                <section class=" bg-light">
+                    <div class="row">
+                        <div class="col-12 pb-3">
+                            <h1 class="h4">Profile</h1>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb m-0 fs-7">
+                                    <li class="breadcrumb-item"><a class="link-primary text-decoration-none"
+                                            href="/teacher">Home</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Profile</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section - Bootstrap Brain Component -->
+                <section class="pb-3 pb-md-4 pb-xl-5 bg-light">
+                    <div class="container">
+                        <div class="row gy-4 gy-lg-0">
+                            <div class="col-12 col-lg-4 col-xl-3 px-0">
+                                <div class="card widget-card border-light shadow-sm">
+                                    <div class="card-header text-bg-primary">Welcome, <%= user.name %></div>
+                                    <div class="card-body">
+                                        <div class="text-center mb-3">
+                                            <img src="/images/avatar.jpg" class="img-fluid rounded-circle"
+                                                alt="Profile Avatar">
+
+                                        </div>
+                                        <h5 class="text-center mb-1"><%= user.name %></h5>
+                                        <p class="text-center text-secondary mb-4"><%= user.role %></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-8 col-xl-9">
+                                <div class="card widget-card border-light shadow-sm">
+                                    <div class="card-body p-4">
+                                        <ul class="nav nav-tabs" id="profileTab" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab"
+                                                    data-bs-target="#overview-tab-pane" type="button" role="tab"
+                                                    aria-controls="overview-tab-pane"
+                                                    aria-selected="true">Overview</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="profile-tab" data-bs-toggle="tab"
+                                                    data-bs-target="#profile-tab-pane" type="button" role="tab"
+                                                    aria-controls="profile-tab-pane"
+                                                    aria-selected="false">Profile</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="password-tab" data-bs-toggle="tab"
+                                                    data-bs-target="#password-tab-pane" type="button" role="tab"
+                                                    aria-controls="password-tab-pane"
+                                                    aria-selected="false">Password</button>
+                                            </li>
+                                        </ul>
+
+                                        <div class="tab-content pt-4" id="profileTabContent">
+                                            <div class="tab-pane fade show active" id="overview-tab-pane"
+                                                role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                                                <h5 class="mb-3 fw-bold">About</h5>
+                                                <p class="lead mb-3 fs-6">Lorem ipsum dolor sit amet, consectetur adipiscing
+                                                    elit. Donec non ornare sem. Pellentesque pretium imperdiet nulla, eu
+                                                    pulvinar odio volutpat eu. Integer id tellus risus. Cras eget lacus
+                                                    egestas, porta turpis nec, luctus risus. Etiam hendrerit turpis
+                                                    lacus, id vestibulum augue iaculis vel. Morbi eu risus porttitor
+                                                    ipsum bibendum varius..</p>
+                                                <h5 class="mb-3 fw-bold">Profile</h5>
+                                                <div class="row g-0">
+                                                    <div
+                                                        class="col-5 col-md-3 bg-light border-bottom border-white border-3">
+                                                        <div class="p-2">Name</div>
+                                                    </div>
+                                                    <div
+                                                        class="col-7 col-md-9 bg-light border-start border-bottom border-white border-3">
+                                                        <div class="p-2"><%= user.name %></div>
+                                                    </div>
+                                                    <div
+                                                        class="col-5 col-md-3 bg-light border-bottom border-white border-3">
+                                                        <div class="p-2">Course</div>
+                                                    </div>
+                                                    <div
+                                                        class="col-7 col-md-9 bg-light border-start border-bottom border-white border-3">
+                                                        <div class="p-2">B.S Computer Science</div>
+                                                    </div>
+                                                    <div
+                                                        class="col-5 col-md-3 bg-light border-bottom border-white border-3">
+                                                        <div class="p-2">Phone</div>
+                                                    </div>
+                                                    <div
+                                                        class="col-7 col-md-9 bg-light border-start border-bottom border-white border-3">
+                                                        <div class="p-2">+2556766798745</div>
+                                                    </div>
+                                                    <div
+                                                        class="col-5 col-md-3 bg-light border-bottom border-white border-3">
+                                                        <div class="p-2">Email</div>
+                                                    </div>
+                                                    <div
+                                                        class="col-7 col-md-9 bg-light border-start border-bottom border-white border-3">
+                                                        <div class="p-2">johndoe@example.com</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel"
+                                                aria-labelledby="profile-tab" tabindex="0">
+                                                <form action="#!" class="row gy-3 gy-xxl-4">
+                                                    <div class="col-12">
+                                                        <div class="row gy-2">
+                                                            <label class="col-12 form-label m-0">Profile Image</label>
+                                                            <div class="col-12">
+                                                                <img src="/images/avatar.jpg" class="img-fluid"
+                                                                    alt="<%= user.name %>" width="100px" height="100px">
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <a href="#!"
+                                                                    class="d-inline-block bg-primary link-light lh-1 p-2 rounded">
+                                                                    <i class="bi bi-upload"></i>
+                                                                </a>
+                                                                <a href="#!"
+                                                                    class="d-inline-block bg-danger link-light lh-1 p-2 rounded">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-6">
+                                                        <label for="inputEmail" class="form-label">Email</label>
+                                                        <input type="email" class="form-control" id="inputEmail"
+                                                            value="">
+                                                    </div>
+                                                    <div class="col-12 col-md-6">
+                                                        <label for="phoneNumber" class="form-label">Email</label>
+                                                        <input type="tel" class="form-control" id="phoneNumber"
+                                                            value="">
+                                                    </div>
+                                                    <div>
+                                                        <label for="inputAbout" class="form-label">About</label>
+                                                        <textarea class="form-control"id="inputAbout" row="30"></textarea>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <button type="submit" class="btn btn-primary">Save
+                                                            Changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                            <div class="tab-pane fade" id="password-tab-pane" role="tabpanel"
+                                                aria-labelledby="password-tab" tabindex="0">
+                                                <form action="#!">
+                                                    <div class="row gy-3 gy-xxl-4">
+                                                        <div class="col-12">
+                                                            <label for="currentPassword" class="form-label">Current
+                                                                Password</label>
+                                                            <input type="password" class="form-control"
+                                                                id="currentPassword">
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <label for="newPassword" class="form-label">New
+                                                                Password</label>
+                                                            <input type="password" class="form-control"
+                                                                id="newPassword">
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <label for="confirmPassword" class="form-label">Confirm
+                                                                Password</label>
+                                                            <input type="password" class="form-control"
+                                                                id="confirmPassword">
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <button type="submit" class="btn btn-primary">Change
+                                                                Password</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+</div>
