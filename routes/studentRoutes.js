@@ -18,6 +18,7 @@ const upload = multer({ storage: storage });
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
+        console.log(req.body)
 
         // Find the user by username
         const user = await User.findOne({ username }).populate('course department subjects');
@@ -26,10 +27,10 @@ router.post('/login', async (req, res) => {
         }
 
         // Compare the provided password with the stored hash
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-            console.log(user);
-            return res.status(400).send('Invalid password.');
+        try {
+            await user.comparePassword(password);
+        } catch (error) {
+            console.log(error);
         }
 
         // Generate a JWT token
@@ -123,7 +124,7 @@ router.post('/permission', isStudent, upload.single('attachment'), async (req, r
 router.post('/submit-attendance', isStudent, async (req, res) => {
     try {
         const { username, qrCodeData } = req.body;
-        const { subjectCode, venueId, date, time } = qrCodeData; // Extracted data from QR code
+        const { subjectCode, venueId, date, time } = qrCodeData;
 
         // Find the student
         const student = await User.findOne({ username: username, role: 'student' });

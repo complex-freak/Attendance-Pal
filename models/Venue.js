@@ -5,7 +5,7 @@ const venueSchema = new mongoose.Schema({
     capacity: { type: Number, required: true },
     isBooked: { type: Boolean, default: false },
     bookingExpiry: { type: Date },
-    bookedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Teacher who booked
+    bookedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 });
 
 module.exports = mongoose.model('Venue', venueSchema);

@@ -76,8 +76,10 @@ router.get('/book-venue', isTeacher, async (req, res) => {
       // Release venues where the booking expiry time has passed
       await Venue.updateMany({ isBooked: true, bookingExpiry: { $lt: now } }, { $set: { isBooked: false, bookedBy: null, bookingExpiry: null } });
 
-      const availableVenues = await Venue.find({ isBooked: false }).sort({ name: 1 }); // Available venues
-      const bookedVenues = await Venue.find({ isBooked: true }).sort({ name: 1 }); // Booked venues
+      const availableVenues = await Venue.find({ isBooked: false }).sort({ name: 1 });
+      const bookedVenues = await Venue.find({ isBooked: true }).sort({ name: 1 });
+
+      console.log(bookedVenues)
 
       res.render('teacher/book-venue', { availableVenues, bookedVenues });
   } catch (error) {

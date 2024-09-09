@@ -104,7 +104,8 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    fetchAvailableVenues(); // Refresh the venues list
+                    fetchAvailableVenues();
+                    console.log(venue);
                 } else {
                     alert('Failed to book venue');
                 }
@@ -113,5 +114,5 @@
     }
 
     // Initial fetch to load available venues
-    fetchAvailableVenues();
+    // fetchAvailableVenues();
 </script>

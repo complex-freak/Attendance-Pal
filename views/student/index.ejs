@@ -20,6 +20,7 @@
             <div class="modal-body">
                 <div id="reader" width="600px"></div>
                 <p class="mt-3">Scanned Result: <span id="scanned-result"></span></p>
+                <input type="text" name="userId" id="userId" hidden value="<%= user.id %>" >
             </div>
             <div class="modal-footer">
                 <button id="rescan-btn" class="btn btn-secondary">Re-Scan</button>
@@ -36,6 +37,7 @@
     const stopScanBtn = document.getElementById("stop-scan-btn");
     const rescanBtn = document.getElementById("rescan-btn");
     const scanModal = document.getElementById("scanModal");
+    const userId = document.getElementById('userId').value;
 
     let html5QrCode = new Html5Qrcode("reader");
     let cameraId;
@@ -50,9 +52,9 @@
             html5QrCode.stop().then(() => {
                 html5QrCode.clear();
                 html5QrCode = {};
-                rescanBtn.disabled = true;
+                rescanBtn.disabled = false;
 
-                // sendQrCodeData(decodedResult);
+                sendQrCodeData(decodedResult);
             })
         } catch (error) {
             if (error == "Cannot stop, scanner is not running or paused.") {
@@ -103,7 +105,7 @@
     // Function to send QR code data to the server
     function sendQrCodeData(decodedText) {
         const dataToSend = {
-            username: 'student123', // Replace with the actual username from your application context
+            username: userId, // Replace with the actual username from your application context
             qrCodeData: JSON.parse(decodedText) // Assuming QR code contains JSON data
         };
 

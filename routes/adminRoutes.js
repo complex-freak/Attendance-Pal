@@ -60,6 +60,8 @@ router.post("/add-user", isAdmin, async (req, res) => {
   try {
     const { username, name, role, department, course, password } = req.body;
 
+    console.log(req.body)
+
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -67,13 +69,13 @@ router.post("/add-user", isAdmin, async (req, res) => {
       username,
       name,
       role,
-      department: department || null, // Assign department if provided
-      course: course || null, // Assign course if provided
+      department: department || null, 
+      course: course || null,
       password: hashedPassword,
     });
 
     await newUser.save();
-    res.redirect("/admin/users"); // Redirect back to the User Management page
+    res.redirect("/admin/users");
   } catch (error) {
     console.error("Error adding user:", error);
     res.status(500).send("Server Error");
@@ -106,6 +108,8 @@ router.post("/edit-user", isAdmin, async (req, res) => {
     if (!user) {
       return res.status(404).send("User not found");
     }
+
+    console.log(req.body)
 
     user.username = username;
     user.name = name;
@@ -721,6 +725,19 @@ router.get('/venues', isAdmin, async (req, res) => {
   } catch (error) {
       console.error('Error fetching venues:', error);
       res.status(500).json({ message: 'Error fetching venues.' });
+  }
+});
+
+router.get("/get-venue/:id", isAdmin, async (req, res) => {
+  try {
+    const venue = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "venue not found" });
+    }
+    res.json(venue);
+  } catch (error) {
+    console.error("Error fetching venue:", error);
+    res.status(500).json({ error: "Server Error" });
   }
 });
 

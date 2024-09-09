@@ -8,10 +8,8 @@ const isAdmin = async function (req, res, next) {
       const decoded = jwt.verify(req.session.token, jwtSecret);
       req.user = decoded;
       if (req.user.role === "admin") {
-        const user = await User.findOne(req.user.id);
+        const user = await User.findById( req.user.userId);
         res.locals.user = user;
-        console.log(user);
-
         next();
       } else {
         res.render("auth");
@@ -38,7 +36,7 @@ const isTeacher = async function (req, res, next) {
       const decoded = jwt.verify(req.session.token, jwtSecret);
       req.user = decoded;
       if (req.user.role === "teacher") {
-        const user = await User.findOne(req.user.id);
+        const user = await User.findById( req.user.userId)
         res.locals.user = user;
         next();
       } else {
@@ -66,7 +64,7 @@ const isStudent = async function (req, res, next) {
       const decoded = jwt.verify(req.session.token, jwtSecret);
       req.user = decoded;
       if (req.user.role === "student") {
-        const user = await User.findOne(req.user.id);
+        const user = await User.findById( req.user.userId)
         res.locals.user = user;
         next();
       } else {
