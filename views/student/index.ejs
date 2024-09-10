@@ -20,7 +20,7 @@
             <div class="modal-body">
                 <div id="reader" width="600px"></div>
                 <p class="mt-3">Scanned Result: <span id="scanned-result"></span></p>
-                <input type="text" name="userId" id="userId" hidden value="<%= user.id %>" >
+                <input type="text" name="userId" id="userId" hidden value="<%= user.id %>">
             </div>
             <div class="modal-footer">
                 <button id="rescan-btn" class="btn btn-secondary">Re-Scan</button>
@@ -98,8 +98,19 @@
         };
 
         html5QrCode.start({
-            facingMode: "environment"
-        }, config, onScanSuccess, onScanFailure);
+                facingMode: "environment"
+            }, config, onScanSuccess, onScanFailure)
+            .catch(err => {
+                if (err ===
+                    "Error getting userMedia, error = NotFoundError: Requested device not found") {
+                    scannedResult.innerText = "Camera not found!";
+                    scannedResult.className = "text-danger"
+                } else {
+                    scannedResult.innerText = err;
+                    scannedResult.className = "text-danger"
+                }
+            })
+
     })
 
     // Function to send QR code data to the server
@@ -153,7 +164,7 @@
             scannedResult.innerText = "";
             scannedResult.className = "text-black";
             rescanBtn.disabled = false;
-            startQrCodeScanner(cameraId);
+            // startQrCodeScanner(cameraId);
         }
     });
 </script>

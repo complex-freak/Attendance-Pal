@@ -18,7 +18,6 @@ const upload = multer({ storage: storage });
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-        console.log(req.body)
 
         // Find the user by username
         const user = await User.findOne({ username }).populate('course department subjects');
